@@ -6,7 +6,7 @@ This is a temporary script file.
 """
 
 import numpy as np
-    
+
 Dict = {0: {'Neighbors': [1,3,5,7], 'Infection Status': 'Infected'},
         1: {'Neighbors': [0,4,6,7], 'Infection Status': 'Uninfected'},
         2: {'Neighbors': [3,4,6,7], 'Infection Status': 'Infected'},
@@ -18,11 +18,12 @@ Dict = {0: {'Neighbors': [1,3,5,7], 'Infection Status': 'Infected'},
 
 NumberofInfections = 4
 NumberofRounds = 0
-ProbabilityofInfection = [0.6,0.4]
+ProbabilityofInfection = [0.1,0.9]
 
-while NumberofRounds <= 10:
+while NumberofRounds <= 3:
     for i in range(0,7):
         if Dict[i]['Infection Status'] == 'Infected':
             for j in range(0,len(Dict[i]['Neighbors'])):
-                Dict[Dict[i]['Neighbors'][j]]['Infection Status'] = np.random.choice(['Infected','Uninfected'], p = ProbabilityofInfection)
+                if Dict[Dict[i]['Neighbors'][j]]['Infection Status'] == 'Uninfected':
+                    Dict[Dict[i]['Neighbors'][j]]['Infection Status'] = np.random.choice(['Infected','Uninfected'], p = ProbabilityofInfection)
     NumberofRounds = NumberofRounds + 1
