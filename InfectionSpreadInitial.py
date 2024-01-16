@@ -6,24 +6,59 @@ This is a temporary script file.
 """
 
 import numpy as np
+import networkx as nx
+from matplotlib import pyplot as plt
 
-Dict = {0: {'Neighbors': [1,3,5,7], 'Infection Status': 'Infected'},
-        1: {'Neighbors': [0,4,6,7], 'Infection Status': 'Uninfected'},
-        2: {'Neighbors': [3,4,6,7], 'Infection Status': 'Infected'},
-        3: {'Neighbors': [0,2,4,5,6], 'Infection Status': 'Uninfected'},
-        4: {'Neighbors': [1,2,3,6], 'Infection Status': 'Infected'},
-        5: {'Neighbors': [0,3,6,7], 'Infection Status': 'Uninfected'},
-        6: {'Neighbors': [1,2,3,4,5], 'Infection Status': 'Uninfected'},
-        7: {'Neighbors': [0,1,2,5,6], 'Infection Status': 'Infected'}}
+#Initial Dictionary
+Dict = {0: {'Neighbors': [1,3,5,7], 'Infection Status': 1},
+        1: {'Neighbors': [0,4,6,7], 'Infection Status': 0},
+        2: {'Neighbors': [3,4,6,7], 'Infection Status': 1},
+        3: {'Neighbors': [0,2,4,5,6], 'Infection Status': 0},
+        4: {'Neighbors': [1,2,3,6], 'Infection Status': 1},
+        5: {'Neighbors': [0,3,6,7], 'Infection Status': 0},
+        6: {'Neighbors': [1,2,3,4,5], 'Infection Status': 0},
+        7: {'Neighbors': [0,1,2,5,6], 'Infection Status': 1}}
 
-NumberofInfections = 4
+#Setting Up Variables
 NumberofRounds = 0
-ProbabilityofInfection = [0.1,0.9]
+ProbabilityofInfection = [0.05,0.95]
+TimesRun = 10
+Storage = np.zeros([TimesRun + 1,len(Dict)])
+Graphs = []
 
-while NumberofRounds <= 3:
-    for i in range(0,7):
-        if Dict[i]['Infection Status'] == 'Infected':
+#Sets Up Initial Round Of Storage for 2D Array That Tracks Infected
+for m in range(0,len(Dict)):
+   Storage[NumberofRounds,m] = Dict[m]['Infection Status']
+
+#Makes Initial Graph for People and the Infected
+InitialGraph = nx.Graph()
+for i in range(0,len(Dict)):
+    for m in range(0,len(Dict[i]['Neighbors'])):
+        InitialGraph.add_edge(i,Dict[i]['Neighbors'][m])
+plt.figure(0)
+nx.draw_circular(InitialGraph,with_labels = True)
+
+#Runs Simulation Based on Number of Rounds and Stores Data for a Graph for Each Round
+while NumberofRounds < TimesRun:
+    Graphs.append((chr(NumberofRounds)))
+    Graphs[NumberofRounds] = nx.Graph()
+    for i in range(0,len(Dict)):
+        if Dict[i]['Infection Status'] == 1:
             for j in range(0,len(Dict[i]['Neighbors'])):
-                if Dict[Dict[i]['Neighbors'][j]]['Infection Status'] == 'Uninfected':
-                    Dict[Dict[i]['Neighbors'][j]]['Infection Status'] = np.random.choice(['Infected','Uninfected'], p = ProbabilityofInfection)
+                if Dict[Dict[i]['Neighbors'][j]]['Infection Status'] == 0:
+                    Dict[Dict[i]['Neighbors'][j]]['Infection Status'] = np.random.choice([1,0], p = ProbabilityofInfection)
+        Storage[NumberofRounds + 1,i] = Dict[i]['Infection Status']
+        for m in range(0,len(Dict[i]['Neighbors'])):
+          Graphs[NumberofRounds].add_edge(i,Dict[i]['Neighbors'][m])
     NumberofRounds = NumberofRounds + 1
+
+#Tells Number of Infected Initially / After Each Round and Displays 2D Array Showing Such
+NumberofInfectedEachRound = np.sum(Storage,1)
+print(NumberofInfectedEachRound)
+print(Storage)
+
+#Makes Graphs for Each Round
+for i in range(0,TimesRun):
+    plt.figure(i+1)
+    nx.draw_circular(Graphs[i],with_labels = True)
+    
