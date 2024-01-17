@@ -58,7 +58,18 @@ print(NumberofInfectedEachRound)
 print(Storage)
 
 #Makes Graphs for Each Round
+# use a different axis for each time point to see them all in one window.
+
+m = int( np.sqrt(TimesRun) )
+n = int( np.ceil(TimesRun/m) )
+
+fig,ax = plt.subplots(m,n, sharex=True, sharey=True, constrained_layout=True)
+
 for i in range(0,TimesRun):
-    plt.figure(i+1)
-    nx.draw_circular(Graphs[i],with_labels = True)
-    
+#    plt.figure(i+1)
+    p,q = np.unravel_index(i, (m,n)) # convert linear index to (row,col)
+    nx.draw_circular(Graphs[i],with_labels = True, node_color=Storage[i], ax=ax[p,q])
+    ax[p,q].set_title(f"Step {i}", loc='left')
+
+fig.show()
+
