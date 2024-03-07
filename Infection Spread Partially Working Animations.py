@@ -90,7 +90,7 @@ def update1(frame1):
     NodeColors = []
     for i in range(0, len(Graph)):
         if Graph.nodes[i]['InfectionStatus'] == 'red':
-            for j in range(len(People)):
+            for j in range(0, len(Graph)):
                 if Graph.nodes[j]['InfectionStatus'] == 'green':
                     Graph.nodes[j]['InfectionStatus'] = np.random.choice(['red', 'green'], p=[0.006, 0.994])
     for q in range(0,len(Graph)):
